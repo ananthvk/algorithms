@@ -1,5 +1,6 @@
 #include <iostream>
 #include <ostream>
+#pragma once
 
 template <typename T> class SinglyLinkedList
 {
