@@ -153,6 +153,7 @@ TEST(BST, TestInorderSuccessorNoRightSubtree)
     it = s.insert(48).first;
     it++;
     ASSERT_EQ(*it, 50);
+    std::set<int> sss;
 }
 
 TEST(BST, TestLargeNumberOfInsertions)
@@ -210,11 +211,11 @@ TEST(BST, RangeBasedForLoop)
     }
     ASSERT_EQ(v.size(), s.size());
     ASSERT_EQ(v1, v);
-
 }
 
 int main(int argc, char *argv[])
 {
+    std::cout << std::endl;
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <stdio.h>
 
-template <typename T> class BSTSet
+template <typename Key, class Compare = std::less<Key>> class BSTSet
 {
   private:
     class Node
@@ -11,12 +11,12 @@ template <typename T> class BSTSet
         Node *right;
         Node *left;
         Node *parent;
-        T value;
+        Key value;
         friend BSTSet;
 
         Node() : right(nullptr), left(nullptr), parent(nullptr) {}
 
-        Node(const T &value) : right(nullptr), left(nullptr), parent(nullptr), value(value) {}
+        Node(const Key &value) : right(nullptr), left(nullptr), parent(nullptr), value(value) {}
     };
 
     Node *root;
@@ -33,7 +33,7 @@ template <typename T> class BSTSet
         }
     }
 
-    Node *get_node(const T &t)
+    Node *get_node(const Key &t)
     {
         sz++;
         return new Node(t);
@@ -112,16 +112,14 @@ template <typename T> class BSTSet
             return *this;
         }
 
-        T &operator*() { return node->value; }
-
-        const T &operator*() const { return node->value; }
+        const Key &operator*() const { return node->value; }
     };
 
     BSTSet() : root(nullptr), leftmost(nullptr), rightmost(nullptr), sz(0) {}
 
     size_t size() { return sz; }
 
-    std::pair<Iterator, bool> insert(const T &t)
+    std::pair<Iterator, bool> insert(const Key &t)
     {
         Node *current = root, *parent = nullptr, *new_node;
         if (!root)
@@ -131,32 +129,32 @@ template <typename T> class BSTSet
             rightmost = root;
             return std::make_pair(Iterator(root), true);
         }
-        if (t < leftmost->value)
+        if (t == leftmost->value)
+        {
+            return std::make_pair(Iterator(leftmost), false);
+        }
+        if (t == rightmost->value)
+        {
+            return std::make_pair(Iterator(rightmost), false);
+        }
+        if (Compare{}(t, leftmost->value))
         {
             leftmost->left = get_node(t);
             leftmost->left->parent = leftmost;
             leftmost = leftmost->left;
             return std::make_pair(Iterator(leftmost), true);
         }
-        if (t == leftmost->value)
-        {
-            return std::make_pair(Iterator(leftmost), false);
-        }
-        if (t > rightmost->value)
+        if (!Compare{}(t, rightmost->value))
         {
             rightmost->right = get_node(t);
             rightmost->right->parent = rightmost;
             rightmost = rightmost->right;
             return std::make_pair(Iterator(rightmost), true);
         }
-        if (t == rightmost->value)
-        {
-            return std::make_pair(Iterator(rightmost), false);
-        }
         while (current)
         {
             parent = current;
-            if (t < current->value)
+            if (Compare{}(t, current->value))
                 current = current->left;
             else if (t == current->value)
                 break;
@@ -169,7 +167,7 @@ template <typename T> class BSTSet
         }
         new_node = get_node(t);
         new_node->parent = parent;
-        if (t < parent->value)
+        if (Compare{}(t, parent->value))
             parent->left = new_node;
         else
             parent->right = new_node;
