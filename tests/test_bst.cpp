@@ -1,7 +1,7 @@
 #include "bst_set.hpp"
-#include<vector>
 #include "gtest/gtest.h"
 #include <set>
+#include <vector>
 
 TEST(BST, TestEmpty)
 {
@@ -176,19 +176,41 @@ TEST(BST, TestLargeNumberOfInsertions)
     ASSERT_EQ(s.size(), 100);
     ASSERT_EQ(*s.begin(), -5000);
 
-    for(const auto& e: v){
+    for (const auto &e : v)
+    {
         s.insert(e);
         stdset.insert(e);
     }
 
     auto s_it = s.begin();
     auto stdset_it = stdset.begin();
-    for(int i = 0; i < 100+(int)v.size(); i++)
+    for (int i = 0; i < 100 + (int)v.size(); i++)
     {
         ASSERT_EQ(*s_it, *stdset_it);
         s_it++;
         stdset_it++;
     }
+}
+
+TEST(BST, RangeBasedForLoop)
+{
+    BSTSet<int> s;
+    s.insert(3);
+    s.insert(8);
+    s.insert(2);
+    s.insert(7);
+    s.insert(-1);
+    s.insert(16);
+    s.insert(0);
+    std::vector<int> v;
+    std::vector<int> v1 = {-1, 0, 2, 3, 7, 8, 16};
+    for (const auto &e : s)
+    {
+        v.push_back(e);
+    }
+    ASSERT_EQ(v.size(), s.size());
+    ASSERT_EQ(v1, v);
+
 }
 
 int main(int argc, char *argv[])
