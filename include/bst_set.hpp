@@ -1,5 +1,6 @@
 #pragma once
 #include <set>
+#include<limits>
 #include <stdexcept>
 #include <stdio.h>
 
@@ -43,6 +44,18 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
 
 
   public:
+    typedef Key value_type;
+    typedef Key key_type;
+    typedef size_t size_type;
+    typedef ptrdiff_t difference_type;
+    typedef Compare key_compare;
+    typedef Compare value_compare;
+    typedef Key &reference;
+    typedef const Key &const_reference;
+    class Iterator;
+    typedef Iterator iterator;
+    typedef const Iterator const_iterator;
+
     class Iterator
     {
       private:
@@ -176,13 +189,33 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
 
     void clear()
     {
+        // TODO: Make an iterative clear function instead
         clear_(root);
         root = nullptr;
     }
 
-    Iterator begin() { return Iterator(leftmost); }
+    Iterator begin() const { return Iterator(leftmost); }
 
-    Iterator end() { return Iterator(); }
+    Iterator end() const { return Iterator(); }
+
+    Iterator cbegin() const { return begin(); }
+
+    Iterator cend() const { return end(); }
+
+    /*
+    Implement decrement operation before rbegin/rend
+    Iterator rbegin() const { return Iterator(rightmost); }
+    Iterator rend() const { return Iterator(); }
+    */
 
     ~BSTSet() { clear(); }
+    
+    bool empty() const {
+        return sz == 0;
+    }
+    
+    size_type max_size() const
+    {
+        return std::numeric_limits<difference_type>::max(); 
+    }
 };
