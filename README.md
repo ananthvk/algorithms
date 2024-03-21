@@ -3,6 +3,8 @@ This repository contains implementations of various data structures and algorith
 
 The implementations are in the `include` folder and the `tests` folder contains various tests to check the working of the algorithm/datastructure.
 
+Other small programs leveraging the use of Linux APIs are stored in the `linux` directory. You will need a linux installation to try them out.
+
 
 ## How to run
 

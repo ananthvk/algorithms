@@ -6,7 +6,7 @@ else
 endif
 
 gtest_dep = dependency('gtest')
-srcs = ['test_singlylist', 'test_bst']
+srcs = ['test_singlylist', 'test_bst', 'test_stack']
 
 foreach s : srcs 
     e = executable(
