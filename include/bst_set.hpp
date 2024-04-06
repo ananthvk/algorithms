@@ -26,6 +26,7 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
     Node *root;
     Node *leftmost;
     Node *rightmost;
+    size_t sz;
 
     void clear_(Node *n)
     {
@@ -42,8 +43,6 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
         sz++;
         return new Node(t);
     }
-
-    size_t sz;
 
 
   public:
@@ -66,7 +65,7 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
       private:
         Node *node;
         // Holds the address of the rightmost pointer in the parent container
-        Node *const*rightmost_node;
+        Node *const *rightmost_node;
 
         void prev()
         {
@@ -148,7 +147,7 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
                 node = nullptr;
             }
         }
-        
+
 
       public:
         typedef Key value_type;
@@ -159,7 +158,10 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
 
         Iterator() : node(nullptr), rightmost_node(nullptr) {}
 
-        Iterator(Node *node, Node *const*rightmost_node) : node(node), rightmost_node(rightmost_node) {}
+        Iterator(Node *node, Node *const *rightmost_node)
+            : node(node), rightmost_node(rightmost_node)
+        {
+        }
 
         bool operator==(const Iterator &other) const { return node == other.node; }
 
@@ -266,7 +268,6 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
 
     iterator begin() const { return Iterator(leftmost, &rightmost); }
 
-    // TODO: end() has to be decrementable
     iterator end() const { return Iterator(nullptr, &rightmost); }
 
     const_iterator cbegin() const { return begin(); }
@@ -280,6 +281,28 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
     const_reverse_iterator crbegin() const { return const_reverse_iterator(end()); }
 
     const_reverse_iterator crend() const { return const_reverse_iterator(begin()); }
+
+    // TOOD: Implement find
+    iterator find(const Key &x)
+    {
+        if (!root)
+            return end();
+        if (x > rightmost->value)
+            return end();
+        if (x < leftmost->value)
+            return end();
+        auto current = root;
+        while (current)
+        {
+            if (x < current->value)
+                current = current->left;
+            else if (x > current->value)
+                current = current->right;
+            else
+                return Iterator(current, &rightmost);
+        }
+        return end();
+    }
 
     ~BSTSet() { clear(); }
 

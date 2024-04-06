@@ -291,6 +291,28 @@ TEST(BST, TestReverseIterator)
     }
 }
 
+TEST(BST, TestFind)
+{
+    BSTSet<int> s;
+    std::vector<int> elements = {1, 8, 3, 7, 6, 4, 0, -1, 5, 20, 24, 19, -20};
+    for (const auto &e : elements)
+    {
+        s.insert(e);
+    }
+    ASSERT_EQ(*s.find(8), 8);
+    ASSERT_EQ(s.find(-2), s.end());
+    ASSERT_EQ(s.find(2), s.end());
+    ASSERT_EQ(s.find(-1000), s.end());
+    ASSERT_EQ(s.find(1000), s.end());
+    ASSERT_EQ(s.find(-21), s.end());
+    ASSERT_EQ(s.find(25), s.end());
+    ASSERT_EQ(s.find(9), s.end());
+    for (const auto &e : elements)
+    {
+        ASSERT_EQ(*s.find(e), e);
+    }
+}
+
 int main(int argc, char *argv[])
 {
     ::testing::InitGoogleTest(&argc, argv);
