@@ -273,14 +273,21 @@ TEST(BST, TestInorderPredecessorNoLeftSubtree)
 TEST(BST, TestReverseIterator)
 {
     BSTSet<int> s;
+    std::set<int> ss;
+
     std::vector<int> elements = {1, 8, 3, 2, 7, 6, 4, 0, -1, 5, 20, 24, 19, -20};
     for (const auto &e : elements)
     {
         s.insert(e);
+        ss.insert(e);
     }
-    for (auto it = s.rbegin(); it != s.rend(); it++)
+    BSTSet<int>::reverse_iterator it = s.rbegin();
+    std::set<int>::reverse_iterator it1 = ss.rbegin();
+    while (it != s.rend() && it1 != ss.rend())
     {
-        std::cout << *it << " ";
+        ASSERT_EQ(*it, *it1);
+        it++;
+        it1++;
     }
 }
 

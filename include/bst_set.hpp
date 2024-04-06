@@ -61,17 +61,20 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
     typedef std::reverse_iterator<iterator> reverse_iterator;
     typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-    class Iterator: public std::iterator<std::bidirectional_iterator_tag, Key>
+    class Iterator : public std::iterator<std::bidirectional_iterator_tag, Key>
     {
       private:
         Node *node;
+        // Holds the address of the rightmost pointer in the parent container
+        Node *const*rightmost_node;
 
         void prev()
         {
             // Moves this node to the previous node which is lesser than this node
             if (!node)
             {
-                throw std::out_of_range("Out of range");
+                node = *rightmost_node;
+                return;
             }
             Node *inorder_pred = node->left, *current, *parent;
             // If the node has a left sub child, traverse the right subtree of the left subchild
@@ -145,6 +148,7 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
                 node = nullptr;
             }
         }
+        
 
       public:
         typedef Key value_type;
@@ -153,9 +157,9 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
         typedef std::bidirectional_iterator_tag iterator_category;
         typedef ptrdiff_t difference_type;
 
-        Iterator() : node(nullptr) {}
+        Iterator() : node(nullptr), rightmost_node(nullptr) {}
 
-        Iterator(Node *node) : node(node) {}
+        Iterator(Node *node, Node *const*rightmost_node) : node(node), rightmost_node(rightmost_node) {}
 
         bool operator==(const Iterator &other) const { return node == other.node; }
 
@@ -164,7 +168,7 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
         // Post increment
         Iterator operator++(int)
         {
-            Iterator it(node);
+            Iterator it(node, rightmost_node);
             next();
             return it;
         }
@@ -179,7 +183,7 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
         // Post decrement
         Iterator operator--(int)
         {
-            Iterator it(node);
+            Iterator it(node, rightmost_node);
             prev();
             return it;
         }
@@ -206,29 +210,29 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
             root = get_node(t);
             leftmost = root;
             rightmost = root;
-            return std::make_pair(Iterator(root), true);
+            return std::make_pair(Iterator(root, &rightmost), true);
         }
         if (t == leftmost->value)
         {
-            return std::make_pair(Iterator(leftmost), false);
+            return std::make_pair(Iterator(leftmost, &rightmost), false);
         }
         if (t == rightmost->value)
         {
-            return std::make_pair(Iterator(rightmost), false);
+            return std::make_pair(Iterator(rightmost, &rightmost), false);
         }
         if (Compare{}(t, leftmost->value))
         {
             leftmost->left = get_node(t);
             leftmost->left->parent = leftmost;
             leftmost = leftmost->left;
-            return std::make_pair(Iterator(leftmost), true);
+            return std::make_pair(Iterator(leftmost, &rightmost), true);
         }
         if (!Compare{}(t, rightmost->value))
         {
             rightmost->right = get_node(t);
             rightmost->right->parent = rightmost;
             rightmost = rightmost->right;
-            return std::make_pair(Iterator(rightmost), true);
+            return std::make_pair(Iterator(rightmost, &rightmost), true);
         }
         while (current)
         {
@@ -242,7 +246,7 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
         }
         if (current)
         {
-            return std::make_pair(Iterator(current), false);
+            return std::make_pair(Iterator(current, &rightmost), false);
         }
         new_node = get_node(t);
         new_node->parent = parent;
@@ -250,7 +254,7 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
             parent->left = new_node;
         else
             parent->right = new_node;
-        return std::make_pair(Iterator(new_node), true);
+        return std::make_pair(Iterator(new_node, &rightmost), true);
     }
 
     void clear()
@@ -260,10 +264,10 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
         root = nullptr;
     }
 
-    iterator begin() const { return Iterator(leftmost); }
+    iterator begin() const { return Iterator(leftmost, &rightmost); }
 
-    // TODO: end() has to be decrementable 
-    iterator end() const { return Iterator(); }
+    // TODO: end() has to be decrementable
+    iterator end() const { return Iterator(nullptr, &rightmost); }
 
     const_iterator cbegin() const { return begin(); }
 
