@@ -18,6 +18,11 @@ template <typename T> class SinglyLinkedList
 
 
   public:
+    typedef size_t size_type;
+    typedef T &reference;
+    typedef const T &const_reference;
+    typedef T value_type;
+
     class ConstIterator
     {
         Node *node;
@@ -192,4 +197,11 @@ template <typename T> class SinglyLinkedList
         }
         return Iterator(h);
     }
+
+    bool empty() const { return sz == 0; }
+
+    T &back() { return tail->value; }
+
+    const T &back() const { return tail->value; }
+
 };

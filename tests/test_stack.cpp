@@ -9,11 +9,6 @@ TEST(Stack, Empty)
     s.push(8);
     s.push(12);
     s.push(14);
-    while (!s.empty())
-    {
-        std::cout << s.top() << std::endl;
-        s.pop();
-    }
 }
 
 int main(int argc, char *argv[])

@@ -213,6 +213,77 @@ TEST(BST, RangeBasedForLoop)
     ASSERT_EQ(v1, v);
 }
 
+TEST(BST, TestInorderPredecessorLeftSubtree)
+{
+    BSTSet<int> s;
+    auto it = s.insert(30).first;
+    auto it2 = it;
+    s.insert(20);
+    s.insert(50);
+    it--;
+    ASSERT_EQ(*it, 20);
+
+    s.insert(22);
+    s.insert(23);
+    s.insert(24);
+    s.insert(28);
+    s.insert(40);
+    s.insert(38);
+    s.insert(34);
+    s.insert(36);
+    it2--;
+    ASSERT_EQ(*it2, 28);
+
+    s.clear();
+    it = s.insert(100).first;
+    s.insert(90);
+    s.insert(80);
+    s.insert(70);
+    it--;
+
+    ASSERT_EQ(*it, 90);
+}
+
+TEST(BST, TestInorderPredecessorNoLeftSubtree)
+{
+    BSTSet<int> s;
+    auto it = s.insert(32).first;
+    s.insert(16);
+    auto it1 = s.insert(48).first;
+
+    it1--;
+    ASSERT_EQ(*it, 32);
+    ASSERT_EQ(it1, it);
+
+    s.clear();
+    s.insert(60);
+    s.insert(45);
+    s.insert(50);
+    it = s.insert(65).first;
+    it--;
+    ASSERT_EQ(*it, 60);
+    it--;
+    ASSERT_EQ(*it, 50);
+    it--;
+    ASSERT_EQ(*it, 45);
+    it--;
+    ASSERT_EQ(it, s.end());
+}
+
+TEST(BST, TestReverseIterator)
+{
+    BSTSet<int> s;
+    std::vector<int> elements = {1, 8, 3, 2, 7, 6, 4, 0, -1, 5, 20, 24, 19, -20};
+    for (const auto &e : elements)
+    {
+        s.insert(e);
+    }
+    for (auto it = s.rbegin(); it != s.rend(); it++)
+    {
+        std::cout << *it << " ";
+    }
+}
+
 int main(int argc, char *argv[])
 {
     ::testing::InitGoogleTest(&argc, argv);

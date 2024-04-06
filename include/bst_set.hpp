@@ -1,8 +1,11 @@
 #pragma once
+#include <limits>
 #include <set>
-#include<limits>
 #include <stdexcept>
 #include <stdio.h>
+
+// Some differences w.r.t standard library set
+// 1. Decrementing begin() results in end() and not undefined behavior
 
 template <typename Key, class Compare = std::less<Key>> class BSTSet
 {
@@ -55,20 +58,62 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
     class Iterator;
     typedef Iterator iterator;
     typedef const Iterator const_iterator;
+    typedef std::reverse_iterator<iterator> reverse_iterator;
+    typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-    class Iterator
+    class Iterator: public std::iterator<std::bidirectional_iterator_tag, Key>
     {
       private:
         Node *node;
 
+        void prev()
+        {
+            // Moves this node to the previous node which is lesser than this node
+            if (!node)
+            {
+                throw std::out_of_range("Out of range");
+            }
+            Node *inorder_pred = node->left, *current, *parent;
+            // If the node has a left sub child, traverse the right subtree of the left subchild
+            if (node->left)
+            {
+                inorder_pred = node->left;
+                while (inorder_pred && inorder_pred->right)
+                    inorder_pred = inorder_pred->right;
+                node = inorder_pred;
+                return;
+            }
+
+            // If the node has a parent,
+            if (node->parent)
+            {
+                current = node;
+                parent = node->parent;
+                // Keep traversing up, until we reach a node which is the right subtree for it's
+                // parent
+                while (parent && parent->left == current)
+                {
+                    current = parent;
+                    parent = current->parent;
+                }
+                node = parent;
+            }
+
+            else
+            {
+                // This is the root node, which does not have a left subtree
+                node = nullptr;
+            }
+        }
+
         void next()
         {
-            Node *inorder_successor = node->right, *current, *parent;
             // Move node to next node which is greater than this node
             if (!node)
             {
                 throw std::out_of_range("Out of range");
             }
+            Node *inorder_successor = node->right, *current, *parent;
 
             // If this node has a right subtree, find the inorder sucessor
             if (node->right)
@@ -102,6 +147,12 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
         }
 
       public:
+        typedef Key value_type;
+        typedef const Key &reference;
+        typedef const Key *pointer;
+        typedef std::bidirectional_iterator_tag iterator_category;
+        typedef ptrdiff_t difference_type;
+
         Iterator() : node(nullptr) {}
 
         Iterator(Node *node) : node(node) {}
@@ -122,6 +173,21 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
         Iterator &operator++()
         {
             next();
+            return *this;
+        }
+
+        // Post decrement
+        Iterator operator--(int)
+        {
+            Iterator it(node);
+            prev();
+            return it;
+        }
+
+        // Pre decrement
+        Iterator &operator--()
+        {
+            prev();
             return *this;
         }
 
@@ -194,28 +260,28 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
         root = nullptr;
     }
 
-    Iterator begin() const { return Iterator(leftmost); }
+    iterator begin() const { return Iterator(leftmost); }
 
-    Iterator end() const { return Iterator(); }
+    iterator end() const { return Iterator(); }
 
-    Iterator cbegin() const { return begin(); }
+    const_iterator cbegin() const { return begin(); }
 
-    Iterator cend() const { return end(); }
+    const_iterator cend() const { return end(); }
 
-    /*
-    Implement decrement operation before rbegin/rend
-    Iterator rbegin() const { return Iterator(rightmost); }
-    Iterator rend() const { return Iterator(); }
-    */
+    reverse_iterator rbegin() const { return reverse_iterator(end()); }
+
+    reverse_iterator rend() const { return reverse_iterator(begin()); }
+
+    const_reverse_iterator crbegin() const { return const_reverse_iterator(end()); }
+
+    const_reverse_iterator crend() const { return const_reverse_iterator(begin()); }
 
     ~BSTSet() { clear(); }
-    
-    bool empty() const {
-        return sz == 0;
-    }
-    
-    size_type max_size() const
-    {
-        return std::numeric_limits<difference_type>::max(); 
-    }
+
+    bool empty() const { return sz == 0; }
+
+    size_type max_size() const { return std::numeric_limits<difference_type>::max(); }
+
+    // TODO: Implement rule of 5
+    // TODO: Implement iterative clear function
 };
