@@ -262,6 +262,7 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
 
     iterator begin() const { return Iterator(leftmost); }
 
+    // TODO: end() has to be decrementable 
     iterator end() const { return Iterator(); }
 
     const_iterator cbegin() const { return begin(); }
