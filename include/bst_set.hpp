@@ -1,8 +1,6 @@
 #pragma once
 #include <limits>
-#include <set>
 #include <stdexcept>
-#include <stdio.h>
 
 // Some differences w.r.t standard library set
 // 1. Decrementing begin() results in end() and not undefined behavior
@@ -282,7 +280,6 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
 
     const_reverse_iterator crend() const { return const_reverse_iterator(begin()); }
 
-    // TOOD: Implement find
     iterator find(const Key &x)
     {
         if (!root)
@@ -303,6 +300,8 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
         }
         return end();
     }
+    
+    // TODO: Implement erase
 
     ~BSTSet() { clear(); }
 
