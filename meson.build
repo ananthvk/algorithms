@@ -6,14 +6,15 @@ else
 endif
 
 gtest_dep = dependency('gtest')
-srcs = ['test_singlylist', 'test_bst', 'test_stack']
+srcs = ['test_singlylist', 'test_bst', 'test_stack', 'test_priority_queue']
 
 foreach s : srcs 
     e = executable(
         s,
         sources: ['tests/' + s + '.cpp'],
         dependencies : [ gtest_dep ],
-        include_directories: ['include']
+        include_directories: ['include'],
+        cpp_args: extra_args
     )
     test(s, e)
 endforeach

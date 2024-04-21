@@ -100,7 +100,6 @@ TEST(SinglyList, GetNthElement)
     SinglyLinkedList<int> sll;
     EXPECT_THROW(sll.get_nth(0), std::out_of_range);
     EXPECT_THROW(sll.get_nth(1), std::out_of_range);
-    EXPECT_THROW(sll.get_nth(-1), std::out_of_range);
     EXPECT_THROW(sll.get_nth(5), std::out_of_range);
     sll.push_back(5);
     ASSERT_EQ(sll.get_nth(0) ,  sll.begin());

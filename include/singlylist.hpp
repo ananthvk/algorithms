@@ -191,7 +191,7 @@ template <typename T> class SinglyLinkedList
             throw std::out_of_range("Index out of range for list");
         }
         Node *h = head;
-        while (n-- > 0)
+        for (size_t i = 0; i < n; i++)
         {
             h = h->next;
         }
@@ -203,5 +203,4 @@ template <typename T> class SinglyLinkedList
     T &back() { return tail->value; }
 
     const T &back() const { return tail->value; }
-
 };
