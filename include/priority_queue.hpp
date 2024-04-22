@@ -59,13 +59,13 @@ class PriorityQueue
         {
             reference left = container[2 * i + 1];
             reference right = ((2 * i + 2) < size()) ? container[2 * i + 2] : left;
-            reference max = left > right ? left : right;
-            if (container[i] > max)
+            reference ref = !Compare{}(left, right) ? left : right;
+            if (!Compare{}(container[i], ref))
                 break;
-            
-            std::swap(container[i], max);
 
-            if (std::addressof(max) == std::addressof(left))
+            std::swap(container[i], ref);
+
+            if (std::addressof(ref) == std::addressof(left))
                 i = 2 * i + 1;
             else
                 i = 2 * i + 2;

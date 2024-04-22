@@ -116,6 +116,138 @@ TEST(PriorityQ, Loop)
         ASSERT_GE(result[i], result[i + 1]);
 }
 
+TEST(PriorityQ, MinHeap)
+{
+    std::vector<int> result;
+    PriorityQueue<int, std::vector<int>, std::greater<int>> pq;
+    for (int i = 0; i < 15; i++)
+        pq.push(i);
+    ASSERT_EQ(pq.top(), 0);
+
+    while (!pq.empty())
+    {
+        result.push_back(pq.top());
+        pq.pop();
+    }
+    for (int i = 0; i < 14; i++)
+        ASSERT_LE(result[i], result[i + 1]);
+}
+
+TEST(PriorityQ, MiscOperations)
+{
+    std::vector<int> result;
+    PriorityQueue<int> pq;
+
+    pq.push(8);
+    ASSERT_EQ(pq.top(), 8);
+    pq.pop();
+    ASSERT_EQ(pq.size(), 0);
+
+    pq.push(3);
+    pq.push(4);
+    ASSERT_EQ(pq.size(), 2);
+    ASSERT_EQ(pq.top(), 4);
+    pq.pop();
+    ASSERT_EQ(pq.top(), 3);
+    ASSERT_EQ(pq.size(), 1);
+    pq.pop();
+    ASSERT_EQ(pq.size(), 0);
+
+    pq.push(4);
+    pq.push(3);
+    ASSERT_EQ(pq.size(), 2);
+    ASSERT_EQ(pq.top(), 4);
+    pq.pop();
+    ASSERT_EQ(pq.top(), 3);
+    ASSERT_EQ(pq.size(), 1);
+    pq.pop();
+    ASSERT_EQ(pq.size(), 0);
+
+    pq.push(3);
+    pq.push(4);
+    pq.push(5);
+    ASSERT_EQ(pq.top(), 5);
+    pq.pop();
+    ASSERT_EQ(pq.top(), 4);
+    pq.pop();
+    ASSERT_EQ(pq.top(), 3);
+    pq.pop();
+    ASSERT_EQ(pq.size(), 0);
+
+
+    pq.push(1);
+    pq.push(2);
+    pq.push(3);
+
+    ASSERT_EQ(pq.top(), 3);
+    pq.pop();
+    ASSERT_EQ(pq.top(), 2);
+    pq.pop();
+    ASSERT_EQ(pq.top(), 1);
+    pq.pop();
+    ASSERT_EQ(pq.size(), 0);
+
+    pq.push(1);
+    pq.push(3);
+    pq.push(2);
+
+    ASSERT_EQ(pq.top(), 3);
+    pq.pop();
+    ASSERT_EQ(pq.top(), 2);
+    pq.pop();
+    ASSERT_EQ(pq.top(), 1);
+    pq.pop();
+    ASSERT_EQ(pq.size(), 0);
+
+    pq.push(2);
+    pq.push(1);
+    pq.push(3);
+
+    ASSERT_EQ(pq.top(), 3);
+    pq.pop();
+    ASSERT_EQ(pq.top(), 2);
+    pq.pop();
+    ASSERT_EQ(pq.top(), 1);
+    pq.pop();
+    ASSERT_EQ(pq.size(), 0);
+
+    pq.push(2);
+    pq.push(3);
+    pq.push(1);
+
+    ASSERT_EQ(pq.top(), 3);
+    pq.pop();
+    ASSERT_EQ(pq.top(), 2);
+    pq.pop();
+    ASSERT_EQ(pq.top(), 1);
+    pq.pop();
+    ASSERT_EQ(pq.size(), 0);
+
+    pq.push(3);
+    pq.push(1);
+    pq.push(2);
+
+    ASSERT_EQ(pq.top(), 3);
+    pq.pop();
+    ASSERT_EQ(pq.top(), 2);
+    pq.pop();
+    ASSERT_EQ(pq.top(), 1);
+    pq.pop();
+    ASSERT_EQ(pq.size(), 0);
+
+    pq.push(3);
+    pq.push(2);
+    pq.push(1);
+
+    ASSERT_EQ(pq.top(), 3);
+    pq.pop();
+    ASSERT_EQ(pq.top(), 2);
+    pq.pop();
+    ASSERT_EQ(pq.top(), 1);
+    pq.pop();
+    ASSERT_EQ(pq.size(), 0);
+}
+
 int main(int argc, char *argv[])
 {
     ::testing::InitGoogleTest(&argc, argv);
