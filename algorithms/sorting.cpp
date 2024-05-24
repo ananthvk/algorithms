@@ -2,10 +2,15 @@
 #include <iomanip>
 #include <iostream>
 #include <iterator>
+#include <memory>
 #include <random>
 #include <sstream>
 #include <time.h>
 #include <vector>
+
+#define INITIAL_NUMBER_OF_ELEMENTS 20000
+#define NUMBER_OF_ITERATIONS 8
+#define INCREMENT_PER_ITERATION 5000
 
 template <typename T> T get_random_value(T min, T max)
 {
@@ -155,8 +160,8 @@ template <typename T> class BubbleSort : public Benchmarkable<T>
 
 template <typename T> void benchmark(Benchmarkable<T> &b, int n)
 {
-    std::cout << "| "<<std::setw(30) << std::left << b.name() << " | " << std::setw(10) << std::right << n
-              << " | ";
+    std::cout << "| " << std::setw(30) << std::left << b.name() << " | " << std::setw(10)
+              << std::right << n << " | ";
     b.init(n);
     clock_t start = clock();
     b.run();
@@ -165,7 +170,7 @@ template <typename T> void benchmark(Benchmarkable<T> &b, int n)
     b.destroy();
     if (!message.empty())
     {
-        std::cerr << "FAILED  | Verification failed: " << message << " |"<< std::endl;
+        std::cerr << "FAILED  | Verification failed: " << message << " |" << std::endl;
     }
     else
     {
@@ -174,22 +179,53 @@ template <typename T> void benchmark(Benchmarkable<T> &b, int n)
     }
 }
 
+void print_headers()
+{
+    // Print headers for the table
+    std::cout << "| " << std::setw(30) << std::left << "Sorting algorithm" << " | " << std::setw(10)
+              << std::right << "Input size" << " | " << "Status  |" << std::setw(10)
+              << " Time elapsed" << " |" << std::endl;
+
+    std::cout << "|-" << std::setw(30) << std::setfill('-') << std::left << "-----------------"
+              << "-|-" << std::setw(10) << std::right << "----------" << "-|-" << "--------|"
+              << std::setw(10) << "--------------|" << std::endl;
+    std::cout << std::setfill(' ');
+}
+
 int main()
 {
-    SelectionSort<int> s;
-    BubbleSort<int> b;
-    int n = 20000;
+    print_headers();
+    std::vector<std::shared_ptr<Benchmarkable<int>>> sorting_algorithms;
+    sorting_algorithms.push_back(std::make_shared<SelectionSort<int>>());
+    sorting_algorithms.push_back(std::make_shared<BubbleSort<int>>());
 
-    std::cout << "| "<< std::setw(30) << std::left << "Sorting algorithm" << " | " << std::setw(10) << std::right << "Input size" 
-              << " | " << "Status  |" << std::setw(10) << " Time elapsed" << " |" << std::endl;
-
-    std::cout << "|-" << std::setw(30) << std::setfill('-') << std::left << "-----------------" << "-|-" << std::setw(10) << std::right << "----------" 
-              << "-|-" << "--------|" << std::setw(10) << "--------------|" << std::endl;
-    std::cout << std::setfill(' ');
-    for (int i = 0; i < 8; i++)
+    for (auto algorithm : sorting_algorithms)
     {
-        benchmark<int>(s, n);
-        benchmark<int>(b, n);
-        n += 5000;
+        int number_of_elements = INITIAL_NUMBER_OF_ELEMENTS;
+        for (int i = 0; i < NUMBER_OF_ITERATIONS; i++)
+        {
+            benchmark<int>(*algorithm, number_of_elements);
+            number_of_elements += INCREMENT_PER_ITERATION;
+        }
     }
 }
+/*
+| Sorting algorithm              | Input size | Status  | Time elapsed |
+|--------------------------------|------------|---------|--------------|
+| Selection sort                 |      20000 | SUCCESS |     1.2266 s |
+| Selection sort                 |      25000 | SUCCESS |     1.7856 s |
+| Selection sort                 |      30000 | SUCCESS |     2.5599 s |
+| Selection sort                 |      35000 | SUCCESS |     3.7642 s |
+| Selection sort                 |      40000 | SUCCESS |     4.7005 s |
+| Selection sort                 |      45000 | SUCCESS |     6.0159 s |
+| Selection sort                 |      50000 | SUCCESS |     7.5327 s |
+| Selection sort                 |      55000 | SUCCESS |     9.4318 s |
+| Bubble sort                    |      20000 | SUCCESS |     3.4518 s |
+| Bubble sort                    |      25000 | SUCCESS |     5.6877 s |
+| Bubble sort                    |      30000 | SUCCESS |     8.2749 s |
+| Bubble sort                    |      35000 | SUCCESS |    11.3999 s |
+| Bubble sort                    |      40000 | SUCCESS |    14.4376 s |
+| Bubble sort                    |      45000 | SUCCESS |    16.9142 s |
+| Bubble sort                    |      50000 | SUCCESS |    20.7272 s |
+| Bubble sort                    |      55000 | SUCCESS |    24.8547 s |
+*/
