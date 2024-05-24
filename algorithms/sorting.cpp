@@ -11,6 +11,7 @@
 #define INITIAL_NUMBER_OF_ELEMENTS 20000
 #define NUMBER_OF_ITERATIONS 8
 #define INCREMENT_PER_ITERATION 5000
+#define VERBOSE_ERRORS false
 
 template <typename T> T get_random_value(T min, T max)
 {
@@ -92,18 +93,21 @@ template <typename T> class SelectionSort : public Benchmarkable<T>
         if (std::is_sorted(elements.begin(), elements.end()))
             return "";
 
-        // To find the index where the error is occuring
-        for (int i = 0; i < n; i++)
+        if (VERBOSE_ERRORS)
         {
-            if (elements[i] != (i + 1))
+            // To find the index where the error is occuring
+            for (int i = 0; i < n; i++)
             {
-                std::stringstream ss;
-                ss << "Verification failed: Expected " << (i + 1) << " at index " << i << ", found "
-                   << elements[i];
-                return ss.str();
+                if (elements[i] != (i + 1))
+                {
+                    std::stringstream ss;
+                    ss << "Verification failed: Expected " << (i + 1) << " at index " << i
+                       << ", found " << elements[i];
+                    return ss.str();
+                }
             }
         }
-        return "";
+        return "-";
     }
 
     void destroy() {}
@@ -142,17 +146,20 @@ template <typename T> class BubbleSort : public Benchmarkable<T>
             return "";
 
         // To find the index where the error is occuring
-        for (int i = 0; i < n; i++)
+        if (VERBOSE_ERRORS)
         {
-            if (elements[i] != (i + 1))
+            for (int i = 0; i < n; i++)
             {
-                std::stringstream ss;
-                ss << "Verification failed: Expected " << (i + 1) << " at index " << i << ", found "
-                   << elements[i];
-                return ss.str();
+                if (elements[i] != (i + 1))
+                {
+                    std::stringstream ss;
+                    ss << "Verification failed: Expected " << (i + 1) << " at index " << i
+                       << ", found " << elements[i];
+                    return ss.str();
+                }
             }
         }
-        return "";
+        return "-";
     }
 
     void destroy() {}
@@ -170,7 +177,10 @@ template <typename T> void benchmark(Benchmarkable<T> &b, int n)
     b.destroy();
     if (!message.empty())
     {
-        std::cerr << "FAILED  | Verification failed: " << message << " |" << std::endl;
+        if (VERBOSE_ERRORS)
+            std::cerr << "FAILED  | Verification failed: " << message << " |" << std::endl;
+        else
+            std::cerr << "FAILED  |   " << std::setw(10) << message << " |" << std::endl;
     }
     else
     {
@@ -209,6 +219,7 @@ int main()
         }
     }
 }
+
 /*
 | Sorting algorithm              | Input size | Status  | Time elapsed |
 |--------------------------------|------------|---------|--------------|
