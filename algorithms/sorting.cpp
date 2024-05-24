@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <iomanip>
 #include <iostream>
 #include <iterator>
 #include <random>
@@ -83,6 +84,59 @@ template <typename T> class SelectionSort : public Benchmarkable<T>
 
     std::string verify() const
     {
+        if (std::is_sorted(elements.begin(), elements.end()))
+            return "";
+
+        // To find the index where the error is occuring
+        for (int i = 0; i < n; i++)
+        {
+            if (elements[i] != (i + 1))
+            {
+                std::stringstream ss;
+                ss << "Verification failed: Expected " << (i + 1) << " at index " << i << ", found "
+                   << elements[i];
+                return ss.str();
+            }
+        }
+        return "";
+    }
+
+    void destroy() {}
+};
+
+template <typename T> class BubbleSort : public Benchmarkable<T>
+{
+    std::vector<T> elements;
+    int n;
+
+  public:
+    std::string name() const { return "Bubble sort"; }
+
+    void init(int num)
+    {
+        n = num;
+        elements = generate_sequence<T>(n);
+        shuffle(elements.begin(), elements.end());
+    }
+
+    void run()
+    {
+        for (int i = 0; i < n - 1; i++)
+        {
+            for (int j = 0; j < n - i - 1; j++)
+            {
+                if (elements[j] > elements[j + 1])
+                    std::swap(elements[j], elements[j + 1]);
+            }
+        }
+    }
+
+    std::string verify() const
+    {
+        if (std::is_sorted(elements.begin(), elements.end()))
+            return "";
+
+        // To find the index where the error is occuring
         for (int i = 0; i < n; i++)
         {
             if (elements[i] != (i + 1))
@@ -101,29 +155,41 @@ template <typename T> class SelectionSort : public Benchmarkable<T>
 
 template <typename T> void benchmark(Benchmarkable<T> &b, int n)
 {
-    std::cout << b.name() << " (" << n << ") : ";
+    std::cout << "| "<<std::setw(30) << std::left << b.name() << " | " << std::setw(10) << std::right << n
+              << " | ";
     b.init(n);
     clock_t start = clock();
     b.run();
     double elapsed = static_cast<double>(clock() - start) / CLOCKS_PER_SEC;
     auto message = b.verify();
+    b.destroy();
     if (!message.empty())
     {
-        std::cerr << "FAILED: Verification failed: " << message << std::endl;
+        std::cerr << "FAILED  | Verification failed: " << message << " |"<< std::endl;
     }
     else
     {
-        std::cout << "SUCCESS: Time elapsed: " << elapsed << std::endl;
+        std::cout << "SUCCESS | " << std::setw(10) << std::right << std::setprecision(4)
+                  << std::fixed << elapsed << " s |" << std::endl;
     }
 }
 
 int main()
 {
     SelectionSort<int> s;
+    BubbleSort<int> b;
     int n = 20000;
+
+    std::cout << "| "<< std::setw(30) << std::left << "Sorting algorithm" << " | " << std::setw(10) << std::right << "Input size" 
+              << " | " << "Status  |" << std::setw(10) << " Time elapsed" << " |" << std::endl;
+
+    std::cout << "|-" << std::setw(30) << std::setfill('-') << std::left << "-----------------" << "-|-" << std::setw(10) << std::right << "----------" 
+              << "-|-" << "--------|" << std::setw(10) << "--------------|" << std::endl;
+    std::cout << std::setfill(' ');
     for (int i = 0; i < 8; i++)
     {
         benchmark<int>(s, n);
+        benchmark<int>(b, n);
         n += 5000;
     }
 }
