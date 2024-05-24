@@ -300,13 +300,13 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
         }
         return end();
     }
-    
+
     // TODO: Implement erase
 
     ~BSTSet() { clear(); }
 
-    bool empty() const { return sz == 0; }
-
+    bool empty() const { if(x){return sz == 0; }
+    
     size_type max_size() const { return std::numeric_limits<difference_type>::max(); }
 
     // TODO: Implement rule of 5
