@@ -45,6 +45,7 @@ template <typename T> class Benchmarkable
     virtual std::string name() const = 0;
     virtual void init(int n) = 0;
     virtual void run() = 0;
+    virtual void destroy() = 0;
     virtual std::string verify() const = 0;
 
     virtual ~Benchmarkable() {}
@@ -58,9 +59,9 @@ template <typename T> class SelectionSort : public Benchmarkable<T>
   public:
     std::string name() const { return "Selection sort"; }
 
-    void init(int n)
+    void init(int num)
     {
-        this->n = n;
+        n = num;
         elements = generate_sequence<T>(n);
         shuffle(elements.begin(), elements.end());
     }
@@ -88,12 +89,14 @@ template <typename T> class SelectionSort : public Benchmarkable<T>
             {
                 std::stringstream ss;
                 ss << "Verification failed: Expected " << (i + 1) << " at index " << i << ", found "
-                   << elements[i] << std::endl;
+                   << elements[i];
                 return ss.str();
             }
         }
         return "";
     }
+
+    void destroy() {}
 };
 
 template <typename T> void benchmark(Benchmarkable<T> &b, int n)
@@ -101,6 +104,7 @@ template <typename T> void benchmark(Benchmarkable<T> &b, int n)
     std::cout << b.name() << " (" << n << ") : ";
     b.init(n);
     clock_t start = clock();
+    b.run();
     double elapsed = static_cast<double>(clock() - start) / CLOCKS_PER_SEC;
     auto message = b.verify();
     if (!message.empty())
@@ -116,5 +120,10 @@ template <typename T> void benchmark(Benchmarkable<T> &b, int n)
 int main()
 {
     SelectionSort<int> s;
-    benchmark<int>(s, 1000);
+    int n = 20000;
+    for (int i = 0; i < 8; i++)
+    {
+        benchmark<int>(s, n);
+        n += 5000;
+    }
 }
