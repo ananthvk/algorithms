@@ -101,7 +101,6 @@ template <typename T> void benchmark(Benchmarkable<T> &b, int n)
     std::cout << b.name() << " (" << n << ") : ";
     b.init(n);
     clock_t start = clock();
-    b.run();
     double elapsed = static_cast<double>(clock() - start) / CLOCKS_PER_SEC;
     auto message = b.verify();
     if (!message.empty())
