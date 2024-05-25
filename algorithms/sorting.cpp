@@ -1,52 +1,45 @@
 #include "benchmark.hpp"
 
-template <typename T> class SelectionSort : public SortingAlgorithm<T>
-{
-  public:
-    std::string name() const { return "Selection sort"; }
-
-    void run()
+SORTING_ALGORITHM(SelectionSort, {
     {
         int &n = this->n;
         auto &elements = this->elements;
         for (int i = 0; i < (n - 1); i++)
         {
-            int minimum = i;
-            // Scan through the array and find the minimum element
-            for (int j = i + 1; j < n; j++)
-            {
-                if (elements[j] < elements[minimum])
-                    minimum = j;
-            }
-            std::swap(elements[i], elements[minimum]);
-        }
+    int minimum = i;
+    // Scan through the array and find the minimum element
+    for (int j = i + 1; j < n; j++)
+    {
+        if (elements[j] < elements[minimum])
+            minimum = j;
     }
-};
+    std::swap(elements[i], elements[minimum]);
+        }
+}
+})
 
-template <typename T> class BubbleSort : public SortingAlgorithm<T>
-{
-  public:
-    std::string name() const { return "Bubble sort"; }
-    void run()
+SORTING_ALGORITHM(BubbleSort, {
     {
         int &n = this->n;
         auto &elements = this->elements;
         for (int i = 0; i < n - 1; i++)
         {
-            for (int j = 0; j < n - i - 1; j++)
-            {
-                if (elements[j] > elements[j + 1])
-                    std::swap(elements[j], elements[j + 1]);
-            }
-        }
+    for (int j = 0; j < n - i - 1; j++)
+    {
+        if (elements[j] > elements[j + 1])
+            std::swap(elements[j], elements[j + 1]);
     }
-};
+        }
+}
+})
+
+SORTING_ALGORITHM(InsertionSort, {})
+
 int main()
 {
     print_headers();
-    std::vector<std::shared_ptr<Benchmarkable<int>>> sorting_algorithms;
-    sorting_algorithms.push_back(std::make_shared<SelectionSort<int>>());
-    sorting_algorithms.push_back(std::make_shared<BubbleSort<int>>());
+    std::vector<std::shared_ptr<Benchmarkable<int>>> sorting_algorithms = {
+        std::make_shared<SelectionSort<int>>(), std::make_shared<BubbleSort<int>>()};
 
     for (auto algorithm : sorting_algorithms)
     {

@@ -73,9 +73,9 @@ template <typename T> class SortingAlgorithm : public Benchmarkable<T>
         shuffle(elements.begin(), elements.end());
     }
 
-    void destroy() {}
+    virtual void destroy() {}
 
-    std::string verify() const
+    virtual std::string verify() const
     {
         if (std::is_sorted(elements.begin(), elements.end()))
             return "";
@@ -134,3 +134,12 @@ inline void print_headers()
               << std::setw(10) << "--------------|" << std::endl;
     std::cout << std::setfill(' ');
 }
+
+// A macro for ease of use
+#define SORTING_ALGORITHM(algorithm, body)                                                         \
+    template <typename T> class algorithm : public SortingAlgorithm<T>                             \
+    {                                                                                              \
+      public:                                                                                      \
+        std::string name() const { return #algorithm; }                                            \
+        void run() body                                                                            \
+    };
