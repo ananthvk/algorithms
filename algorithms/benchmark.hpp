@@ -9,9 +9,9 @@
 #include <time.h>
 #include <vector>
 
-#define INITIAL_NUMBER_OF_ELEMENTS 20000
-#define NUMBER_OF_ITERATIONS 8
-#define INCREMENT_PER_ITERATION 5000
+#define INITIAL_NUMBER_OF_ELEMENTS 100000
+#define NUMBER_OF_ITERATIONS 10
+#define INCREMENT_PER_ITERATION 1000000
 #define VERBOSE_ERRORS false
 
 template <typename T> inline T get_random_value(T min, T max)
