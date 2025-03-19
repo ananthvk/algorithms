@@ -13,7 +13,7 @@ Firstly, install [meson](https://github.com/mesonbuild/meson) and [ninja](https:
 Clone the repository
 
 ```
-$ git clone https://github.com/ananthvk/dsa
+$ git clone https://github.com/ananthvk/algorithms
 $ cd dsa
 ```
 
