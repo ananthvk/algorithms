@@ -1,6 +1,7 @@
 #pragma once
 #include <limits>
 #include <stdexcept>
+#include <stdint.h>
 
 // Some differences w.r.t standard library set
 // 1. Decrementing begin() results in end() and not undefined behavior
@@ -305,8 +306,8 @@ template <typename Key, class Compare = std::less<Key>> class BSTSet
 
     ~BSTSet() { clear(); }
 
-    bool empty() const { if(x){return sz == 0; }
-    
+    bool empty() const { return sz == 0; }
+
     size_type max_size() const { return std::numeric_limits<difference_type>::max(); }
 
     // TODO: Implement rule of 5
