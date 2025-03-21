@@ -4,7 +4,6 @@
 #include <iostream>
 #include <optional>
 #include <stdint.h>
-#include <unordered_map>
 #include <vector>
 
 /*
@@ -58,7 +57,6 @@ class HashMap
                 static_cast<size_t>(growth_factor_ * static_cast<float>(number_of_slots_total)) +
                 number_of_slots_total;
 
-
         std::vector<Slot> new_slots(new_size);
         // Move all elements from the old table to the new one
         for (size_t i = 0; i < slots.size(); ++i)
@@ -70,7 +68,6 @@ class HashMap
             }
         }
         std::swap(slots, new_slots);
-        printf("Grew hash table size from %u to %u\n", number_of_slots_total, new_size);
         number_of_slots_total = new_size;
     }
 
@@ -91,7 +88,7 @@ class HashMap
 
     HashMap()
         : sz(0), number_of_slots_used(0), number_of_slots_total(0),
-          max_load_factor_(DEFAULT_MAX_LOAD_FACTOR)
+          max_load_factor_(DEFAULT_MAX_LOAD_FACTOR), growth_factor_(DEFAULT_GROWTH_FACTOR)
     {
     }
 

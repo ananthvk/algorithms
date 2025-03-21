@@ -34,6 +34,52 @@ TEST(HashMapTest, InsertAndRetrieveValues)
     ASSERT_EQ(h.size(), 4);
 }
 
+TEST(HashMapTest, LargeNumberOfValues)
+{
+    HashMap<int, long long int> h;
+    for (int i = 0; i < 780000; i++)
+        h.insert(i, static_cast<long long int>(i) * i);
+    ASSERT_EQ(h.size(), 780000);
+    for (int i = 0; i < 780000; i++)
+        ASSERT_EQ(h.find(i), static_cast<long long int>(i) * i);
+}
+
+TEST(HashMapTest, ElementsThatAreNotPresent)
+{
+    HashMap<std::string, int> h;
+    h.insert("Hello there", 58);
+    h.insert("Who are you?", 31);
+    ASSERT_EQ(h.find("SDFSDF"), std::nullopt);
+    ASSERT_EQ(h.find(""), std::nullopt);
+    ASSERT_EQ(h.find("Hello there "), std::nullopt);
+}
+
+TEST(HashMapTest, UpdateOperation)
+{
+    HashMap<int, long long int> h;
+    for (int i = 0; i < 5000; i++)
+        h.insert(i, static_cast<long long int>(i) * i);
+    for (int i = 0; i < 5000; i++)
+        h.insert(i, static_cast<long long int>(i) * i * i);
+    for (int i = 0; i < 5000; i++)
+        ASSERT_EQ(h.find(i), static_cast<long long int>(i) * i * i);
+    
+    HashMap<std::string, std::string> kv;
+    kv.insert("Hello", "World");
+    kv.insert("C+", "+");
+    kv.insert("Empty", "");
+    ASSERT_EQ(kv.find("Hello"), "World");
+    ASSERT_EQ(kv.find("C+"), "+");
+    ASSERT_EQ(kv.find("Empty"), "");
+
+    kv.insert("Hello", "World New");
+    kv.insert("C+", "New +");
+    kv.insert("Empty", "Not anymore");
+    ASSERT_EQ(kv.find("Hello"), "World New");
+    ASSERT_EQ(kv.find("C+"), "New +");
+    ASSERT_EQ(kv.find("Empty"), "Not anymore");
+}
+
 int main(int argc, char *argv[])
 {
     ::testing::InitGoogleTest(&argc, argv);
